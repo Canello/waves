@@ -112,6 +112,12 @@ export class Background {
 
         return points;
     }
+
+    resetDistortions() {
+        this.grid.forEach((row) =>
+            row.forEach((point) => point.resetDistortion())
+        );
+    }
 }
 
 class Point {
