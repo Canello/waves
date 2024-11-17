@@ -1,6 +1,7 @@
-import { Background } from "./background";
+import { Screen } from "../screen/screen.js";
+import { Background } from "./background.js";
 
-export class Form {
+export class Body {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -55,11 +56,11 @@ export class Piece {
     }
 
     get xc() {
-        return x + this.width / 2;
+        return this.x + this.width / 2;
     }
 
     get yc() {
-        return y + this.height / 2;
+        return this.y + this.height / 2;
     }
 
     distort() {
@@ -79,11 +80,11 @@ export class Piece {
 
     calculateDistortion(xp, yp) {
         const xpc = this.xc - xp;
-        const distortionFactorX = Math.abs(1 - xpc / (this.width / 2));
+        const distortionFactorX = 1 - Math.abs(xpc / (this.width / 2));
         const dx = xpc * distortionFactorX;
 
         const ypc = this.yc - yp;
-        const distortionFactorY = Math.abs(1 - ypc / (this.height / 2));
+        const distortionFactorY = 1 - Math.abs(ypc / (this.height / 2));
         const dy = ypc * distortionFactorY;
 
         return [dx, dy];

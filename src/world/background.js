@@ -6,6 +6,11 @@ export class Background {
     constructor() {
         if (!Background.instance) {
             Background.instance = this;
+            const screen = new Screen();
+            this.numRows = 50;
+            this.numCols = 50;
+            this.rowGap = screen.height / (this.numRows - 1);
+            this.colGap = screen.width / (this.numCols - 1);
             this.grid = this.makeGrid();
         }
 
@@ -13,17 +18,14 @@ export class Background {
     }
 
     makeGrid() {
-        const numRows = 50;
-        const numCols = 50;
         const grid = [];
-        const screen = new Screen();
 
-        for (let i = 0; i < numRows; i++) {
+        for (let i = 0; i < this.numRows; i++) {
             const row = [];
 
-            for (let j = 0; j < numCols; j++) {
-                const x = (screen.width / (numCols - 1)) * j;
-                const y = (screen.height / (numRows - 1)) * i;
+            for (let j = 0; j < this.numCols; j++) {
+                const x = this.colGap * j;
+                const y = this.rowGap * i;
                 row.push(new Point(x, y));
             }
 
@@ -44,6 +46,31 @@ export class Background {
     }
 
     render() {
+        this.renderRows();
+        this.renderCols();
+    }
+
+    renderRows() {
+        const c = new Screen().c;
+
+        for (let row of this.grid) {
+            if (row.length < 2) return;
+
+            c.beginPath();
+            c.moveTo(row[0].xDistorted, row[0].yDistorted);
+
+            for (let i = 1; i < row.length; i++) {
+                c.lineTo(row[i].xDistorted, row[i].yDistorted);
+                c.fillStyle = "white";
+            }
+
+            c.strokeStyle = "white";
+            c.lineWidth = 1;
+            c.stroke();
+        }
+    }
+
+    renderCols() {
         const c = new Screen().c;
         const gridT = this.transpose(this.grid);
 
@@ -56,7 +83,6 @@ export class Background {
             for (let i = 1; i < col.length; i++) {
                 c.lineTo(col[i].xDistorted, col[i].yDistorted);
                 c.fillStyle = "white";
-                // c.fillRect(col[i].xDistorted - 1, col[i].yDistorted - 1, 2, 2);
             }
 
             c.strokeStyle = "white";
@@ -71,7 +97,18 @@ export class Background {
         const yMin = Math.min(y1, y2);
         const yMax = Math.max(y1, y2);
 
+        const jMin = Math.ceil(xMin / this.colGap);
+        const jMax = Math.floor(xMax / this.colGap);
+        const iMin = Math.ceil(yMin / this.rowGap);
+        const iMax = Math.floor(yMax / this.rowGap);
+
         const points = [];
+
+        for (let i = iMin; i <= iMax; i++) {
+            for (let j = jMin; j <= jMax; j++) {
+                points.push(this.grid[i][j]);
+            }
+        }
 
         return points;
     }
