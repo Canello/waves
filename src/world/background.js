@@ -1,4 +1,5 @@
 import { Screen } from "../screen/screen.js";
+import { transpose } from "../utils/math.js";
 
 export class Background {
     static instance;
@@ -7,8 +8,8 @@ export class Background {
         if (!Background.instance) {
             Background.instance = this;
             const screen = new Screen();
-            this.numRows = 50;
-            this.numCols = 50;
+            this.numRows = 100;
+            this.numCols = 100;
             this.rowGap = screen.height / (this.numRows - 1);
             this.colGap = screen.width / (this.numCols - 1);
             this.grid = this.makeGrid();
@@ -33,16 +34,6 @@ export class Background {
         }
 
         return grid;
-    }
-
-    forEachPoint(func) {
-        this.grid.forEach((row) => row.forEach((point) => func(point)));
-    }
-
-    transpose(matrix) {
-        return matrix[0].map((_, colIndex) =>
-            matrix.map((row) => row[colIndex])
-        );
     }
 
     render() {
@@ -72,7 +63,7 @@ export class Background {
 
     renderCols() {
         const c = new Screen().c;
-        const gridT = this.transpose(this.grid);
+        const gridT = transpose(this.grid);
 
         for (let col of gridT) {
             if (col.length < 2) return;
