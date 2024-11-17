@@ -78,19 +78,34 @@ export class Piece {
     }
 
     calculateDistortion(xp, yp) {
+        // Distortion factor based on euclidean distance of point to center of piece
+        // The CLOSER to the center, the greater the distortion towards the center
         const pc = Math.sqrt((this.xc - xp) ** 2 + (this.yc - yp) ** 2);
         const pcMax = Math.sqrt(
             (this.xc - this.x) ** 2 + (this.yc - this.y) ** 2
         );
-        const distortionFactorPc = 1 - pc / pcMax;
+        const distortionFactorEuclidean = 1 - pc / pcMax;
 
+        // Distortion factors based on x and y distances of point to center of piece
+        // The FURTHER from the center, the greater the distortion towards the center
         const xpc = this.xc - xp;
-        const distortionFactorX = 1 - Math.abs(xpc / (this.width / 2));
-        const dx = xpc * distortionFactorX * distortionFactorPc;
-
+        const distortionFactorX = Math.abs(xpc / (this.width / 2));
         const ypc = this.yc - yp;
-        const distortionFactorY = 1 - Math.abs(ypc / (this.height / 2));
-        const dy = ypc * distortionFactorY * distortionFactorPc;
+        const distortionFactorY = Math.abs(ypc / (this.height / 2));
+
+        // Distortion factor based on randomness and euclidean distance of point to center of piece
+        // The CLOSER to the center, the greater the random distortion absolute value
+        const distortionFactorRandom =
+            5 * Math.random() * (distortionFactorEuclidean + 1) ** 2;
+
+        // xpc and ypx in equations below add the direction of the distortion and some amplitude
+        // as they have signs (not absolute value) and amplitude (not normalized)
+        const dx =
+            xpc * distortionFactorX * distortionFactorEuclidean +
+            distortionFactorRandom;
+        const dy =
+            ypc * distortionFactorY * distortionFactorEuclidean +
+            distortionFactorRandom;
 
         return [dx, dy];
     }
