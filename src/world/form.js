@@ -1,4 +1,3 @@
-import { Screen } from "../screen/screen.js";
 import { Background } from "./background.js";
 
 export class Body {
@@ -30,7 +29,7 @@ export class Segment {
     }
 
     addPiece(distanceAlongSegment, distancePerpendicular, width, height) {
-        thetaRad = (Math.PI * theta) / 360;
+        const thetaRad = (Math.PI * this.theta) / 360;
 
         const xAlongSegment = distanceAlongSegment * Math.cos(thetaRad);
         const xPerpendicular = distancePerpendicular * Math.cos(thetaRad);
@@ -79,13 +78,19 @@ export class Piece {
     }
 
     calculateDistortion(xp, yp) {
+        const pc = Math.sqrt((this.xc - xp) ** 2 + (this.yc - yp) ** 2);
+        const pcMax = Math.sqrt(
+            (this.xc - this.x) ** 2 + (this.yc - this.y) ** 2
+        );
+        const distortionFactorPc = 1 - pc / pcMax;
+
         const xpc = this.xc - xp;
         const distortionFactorX = 1 - Math.abs(xpc / (this.width / 2));
-        const dx = xpc * distortionFactorX;
+        const dx = xpc * distortionFactorX * distortionFactorPc;
 
         const ypc = this.yc - yp;
         const distortionFactorY = 1 - Math.abs(ypc / (this.height / 2));
-        const dy = ypc * distortionFactorY;
+        const dy = ypc * distortionFactorY * distortionFactorPc;
 
         return [dx, dy];
     }
