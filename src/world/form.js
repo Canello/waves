@@ -29,20 +29,26 @@ export class Segment {
     }
 
     addPiece(distanceAlongSegment, distancePerpendicular, width, height) {
-        const thetaRad = (Math.PI * this.theta) / 360;
+        const thetaRad = (Math.PI * this.theta) / 180;
 
         const xAlongSegment = distanceAlongSegment * Math.cos(thetaRad);
-        const xPerpendicular = distancePerpendicular * Math.cos(thetaRad);
+        const xPerpendicular =
+            distancePerpendicular * Math.cos(thetaRad + Math.PI / 2);
         const xPiece = this.x + xAlongSegment + xPerpendicular;
 
         const yAlongSegment = distanceAlongSegment * Math.sin(thetaRad);
-        const yPerpendicular = distancePerpendicular * Math.sin(thetaRad);
+        const yPerpendicular =
+            distancePerpendicular * Math.sin(thetaRad + Math.PI / 2);
         const yPiece = this.y + yAlongSegment + yPerpendicular;
 
         const piece = new Piece(xPiece, yPiece, width, height);
         this.pieces.push(piece);
 
         return this;
+    }
+
+    distort() {
+        this.pieces.forEach((piece) => piece.distort());
     }
 }
 
