@@ -2,9 +2,17 @@ import { Background } from "./background.js";
 import { Screen } from "../screen/screen.js";
 
 export class World {
+    static instance;
+
     constructor() {
-        this.background = new Background();
-        this.forms = [];
+        if (!World.instance) {
+            World.instance = this;
+
+            this.background = new Background();
+            this.forms = [];
+        }
+
+        return World.instance;
     }
 
     start() {
@@ -32,5 +40,11 @@ export class World {
 
     addForm(form) {
         this.forms.push(form);
+    }
+
+    getFirstFormThatIntersectsWith(x, y) {
+        for (let form of this.forms) {
+            if (form.intersects(x, y)) return form;
+        }
     }
 }

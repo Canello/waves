@@ -2,12 +2,44 @@ import { Background } from "./background.js";
 
 export class Body {
     constructor(x, y) {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
         this.segments = [];
     }
 
-    addSegment(segment) {
+    get x() {
+        return this._x;
+    }
+
+    set x(xNew) {
+        const diff = xNew - this.x;
+        if (diff === 0) return;
+        this._x = xNew;
+        this.segments.forEach((segment) =>
+            segment.pieces.forEach((piece) => {
+                piece.x = piece.x + diff;
+            })
+        );
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    set y(yNew) {
+        const diff = yNew - this._y;
+        if (diff === 0) return;
+        this._y = yNew;
+        this.segments.forEach((segment) =>
+            segment.pieces.forEach((piece) => {
+                piece.y = piece.y + diff;
+            })
+        );
+    }
+
+    addSegment(x, y, length, theta) {
+        // this x and y are measured in relation to the body's origin
+        const segment = new Segment(x, y, length, theta);
         this.segments.push(segment);
         return this;
     }
@@ -16,6 +48,15 @@ export class Body {
         this.segments.forEach((segment) =>
             segment.pieces.forEach((piece) => piece.distort())
         );
+    }
+
+    intersects(x, y) {
+        for (let segment of this.segments) {
+            for (let piece of segment.pieces) {
+                if (piece.intersects(x, y)) return true;
+            }
+        }
+        return false;
     }
 }
 
@@ -45,10 +86,6 @@ export class Segment {
         this.pieces.push(piece);
 
         return this;
-    }
-
-    distort() {
-        this.pieces.forEach((piece) => piece.distort());
     }
 }
 
@@ -114,5 +151,14 @@ export class Piece {
             distortionFactorRandom;
 
         return [dx, dy];
+    }
+
+    intersects(x, y) {
+        return (
+            this.x <= x &&
+            x <= this.x + this.width &&
+            this.y <= y &&
+            y <= this.y + this.height
+        );
     }
 }

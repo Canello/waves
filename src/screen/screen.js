@@ -6,7 +6,9 @@ export class Screen {
             Screen.instance = this;
 
             this.canvas = document.getElementById("canvas");
-            this.fixDpr(this.canvas);
+            this.dpr = window.devicePixelRatio || 1;
+            this.canvas.width = this.canvas.clientWidth * this.dpr;
+            this.canvas.height = this.canvas.clientHeight * this.dpr;
 
             this.c = this.canvas.getContext("2d");
             this.width = this.canvas.width;
@@ -14,12 +16,6 @@ export class Screen {
         }
 
         return Screen.instance;
-    }
-
-    fixDpr(canvas) {
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = canvas.clientWidth * dpr;
-        canvas.height = canvas.clientHeight * dpr;
     }
 
     clear() {
