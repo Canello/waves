@@ -21,4 +21,18 @@ export class Screen {
     clear() {
         this.c.clearRect(0, 0, this.width, this.height);
     }
+
+    static xBounded(x) {
+        const screen = new Screen();
+        x = x < 0 ? 0 : x;
+        x = x > screen.width ? screen.width : x;
+        return x;
+    }
+
+    static yBounded(y) {
+        const screen = new Screen();
+        y = y < 0 ? 0 : y;
+        y = y > screen.height ? screen.height : y;
+        return y;
+    }
 }

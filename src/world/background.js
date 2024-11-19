@@ -83,10 +83,18 @@ export class Background {
     }
 
     getPointsInArea(x1, x2, y1, y2) {
+        x1 = Screen.xBounded(x1);
+        x2 = Screen.xBounded(x2);
+        y1 = Screen.yBounded(y1);
+        y2 = Screen.yBounded(y2);
+
         const xMin = Math.min(x1, x2);
         const xMax = Math.max(x1, x2);
         const yMin = Math.min(y1, y2);
         const yMax = Math.max(y1, y2);
+
+        const isZeroSizeArea = (xMax - xMin) * (yMax - yMin) === 0;
+        if (isZeroSizeArea) return [];
 
         const jMin = Math.ceil(xMin / this.colGap);
         const jMax = Math.floor(xMax / this.colGap);
