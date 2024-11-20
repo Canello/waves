@@ -11,3 +11,7 @@ world.addForm(new Piece(1188, 0, 100, 100));
 world.addForm(new Piece(0, 768, 100, 100));
 world.addForm(new Piece(1188, 768, 100, 100));
 world.start();
+
+// next
+// add width and height size controller for piece under the mouse
+// add body assembler in user interface
