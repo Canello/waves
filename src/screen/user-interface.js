@@ -42,10 +42,10 @@ class MouseHandler {
     }
 
     onMove(event) {
-        // Normalize mouse coordinates to match the canvas's internal resolution
-        const dpr = this.screen.dpr;
-        const x = event.offsetX * dpr;
-        const y = event.offsetY * dpr;
+        const [x, y] = this.normalizeMouseCoordinates(
+            event.offsetX,
+            event.offsetY
+        );
 
         const deltaX = x - this.x;
         const deltaY = y - this.y;
@@ -55,12 +55,25 @@ class MouseHandler {
 
         if (!this.isPressed) return;
 
-        const world = new World();
-        const form = world.getFirstFormThatIntersectsWith(this.x, this.y);
+        const form = this.getFormUnderneathMouse();
         if (form) {
             form.x = form.x + deltaX;
             form.y = form.y + deltaY;
         }
+    }
+
+    normalizeMouseCoordinates(x, y) {
+        // Normalize mouse coordinates to match the canvas's internal resolution
+        const dpr = this.screen.dpr;
+        const xNormalized = x * dpr;
+        const yNormalized = y * dpr;
+        return [xNormalized, yNormalized];
+    }
+
+    getFormUnderneathMouse() {
+        const world = new World();
+        const form = world.getFirstFormThatIntersectsWith(this.x, this.y);
+        return form;
     }
 }
 
@@ -74,7 +87,8 @@ class KeyboardHandler {
             this.world = new World();
             this.mouseHandler = new MouseHandler();
             this.screen = new Screen();
-            this.strategies = this.makeStrategies();
+            this.keyUpStrategies = this.makeKeyUpStrategies();
+            this.keyDownStrategies = this.makeKeyDownStrategies();
             this.setup();
         }
 
@@ -83,15 +97,35 @@ class KeyboardHandler {
 
     setup() {
         document.addEventListener("keyup", ({ key }) => {
-            const strategy = this.strategies[key];
+            const strategy = this.keyUpStrategies[key];
+            if (strategy) strategy();
+        });
+
+        document.addEventListener("keydown", ({ key }) => {
+            const strategy = this.keyDownStrategies[key];
             if (strategy) strategy();
         });
     }
 
-    makeStrategies() {
+    makeKeyUpStrategies() {
         const p = this.createPieceOnMouseLocation.bind(this);
+        const x = this.deletePieceOnMouseLocation.bind(this);
         return {
             p,
+            x,
+        };
+    }
+
+    makeKeyDownStrategies() {
+        const q = this.decreasePieceWidthBy10.bind(this);
+        const w = this.increasePieceWidthBy10.bind(this);
+        const a = this.decreasePieceHeightBy10.bind(this);
+        const s = this.increasePieceHeightBy10.bind(this);
+        return {
+            q,
+            w,
+            a,
+            s,
         };
     }
 
@@ -105,5 +139,39 @@ class KeyboardHandler {
             defaultHeight
         );
         this.world.addForm(piece);
+    }
+
+    deletePieceOnMouseLocation() {
+        this.world.deleteForm(this.mouseHandler.x, this.mouseHandler.y);
+    }
+
+    decreasePieceWidthBy10() {
+        const form = this.mouseHandler.getFormUnderneathMouse();
+        if (!form) return;
+        if (form.width < 11) return;
+        form.width = form.width - 10;
+        form.x = form.x + 5;
+    }
+
+    increasePieceWidthBy10() {
+        const form = this.mouseHandler.getFormUnderneathMouse();
+        if (!form) return;
+        form.width = form.width + 10;
+        form.x = form.x - 5;
+    }
+
+    decreasePieceHeightBy10() {
+        const form = this.mouseHandler.getFormUnderneathMouse();
+        if (!form) return;
+        if (form.height < 11) return;
+        form.height = form.height - 10;
+        form.y = form.y + 5;
+    }
+
+    increasePieceHeightBy10() {
+        const form = this.mouseHandler.getFormUnderneathMouse();
+        if (!form) return;
+        form.height = form.height + 10;
+        form.y = form.y - 5;
     }
 }

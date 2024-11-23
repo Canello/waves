@@ -13,5 +13,8 @@ world.addForm(new Piece(1188, 768, 100, 100));
 world.start();
 
 // next
-// add width and height size controller for piece under the mouse
+// add new kind of Piece that has no width and height, only a distribution of mass, which is used for calculating the distortion
+// make width and height modifiers work on body
 // add body assembler in user interface
+// add layer system for picking Pieces
+// add GUI menu

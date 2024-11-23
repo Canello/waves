@@ -42,6 +42,16 @@ export class World {
         this.forms.push(form);
     }
 
+    deleteForm(x, y) {
+        for (let i = 0; i < this.forms.length; i++) {
+            const form = this.forms[i];
+            if (form.intersects(x, y)) {
+                this.forms.splice(i, 1);
+                return;
+            }
+        }
+    }
+
     getFirstFormThatIntersectsWith(x, y) {
         for (let form of this.forms) {
             if (form.intersects(x, y)) return form;
