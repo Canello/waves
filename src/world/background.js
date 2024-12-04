@@ -46,18 +46,47 @@ export class Background {
 
         for (let row of this.grid) {
             if (row.length < 2) return;
-
-            c.beginPath();
-            c.moveTo(row[0].xDistorted, row[0].yDistorted);
-
-            for (let i = 1; i < row.length; i++) {
-                c.lineTo(row[i].xDistorted, row[i].yDistorted);
-                c.fillStyle = "white";
-            }
-
-            c.strokeStyle = "white";
             c.lineWidth = 1;
-            c.stroke();
+
+            for (let i = 0; i < row.length - 1; i++) {
+                const startPoint = row[i];
+                const finishPoint = row[i + 1];
+
+                // red line
+                const kRed = 1.5;
+                c.beginPath();
+                c.moveTo(
+                    startPoint.x + kRed * startPoint.dx,
+                    startPoint.yDistorted
+                );
+                c.lineTo(
+                    finishPoint.x + kRed * finishPoint.dx,
+                    finishPoint.yDistorted
+                );
+                c.strokeStyle = "rgba(235, 2, 33, 0.75)";
+                c.stroke();
+
+                // blue line
+                const kBlue = 2;
+                c.beginPath();
+                c.moveTo(
+                    startPoint.x + kBlue * startPoint.dx,
+                    startPoint.yDistorted
+                );
+                c.lineTo(
+                    finishPoint.x + kBlue * finishPoint.dx,
+                    finishPoint.yDistorted
+                );
+                c.strokeStyle = "rgba(66, 209, 237, 0.75)";
+                c.stroke();
+
+                // white line
+                c.beginPath();
+                c.moveTo(startPoint.xDistorted, startPoint.yDistorted);
+                c.lineTo(finishPoint.xDistorted, finishPoint.yDistorted);
+                c.strokeStyle = "rgba(255, 255, 255, 0.75)";
+                c.stroke();
+            }
         }
     }
 
@@ -67,18 +96,47 @@ export class Background {
 
         for (let col of gridT) {
             if (col.length < 2) return;
-
-            c.beginPath();
-            c.moveTo(col[0].xDistorted, col[0].yDistorted);
-
-            for (let i = 1; i < col.length; i++) {
-                c.lineTo(col[i].xDistorted, col[i].yDistorted);
-                c.fillStyle = "white";
-            }
-
-            c.strokeStyle = "white";
             c.lineWidth = 1;
-            c.stroke();
+
+            for (let i = 0; i < col.length - 1; i++) {
+                const startPoint = col[i];
+                const finishPoint = col[i + 1];
+
+                // red line
+                // const kRed = 0.75;
+                // c.beginPath();
+                // c.moveTo(
+                //     startPoint.x + kRed * startPoint.dx,
+                //     startPoint.yDistorted
+                // );
+                // c.lineTo(
+                //     finishPoint.x + kRed * finishPoint.dx,
+                //     finishPoint.yDistorted
+                // );
+                // c.strokeStyle = "rgba(235, 2, 33, 0.75)";
+                // c.stroke();
+
+                // blue line
+                // const kBlue = 0.9;
+                // c.beginPath();
+                // c.moveTo(
+                //     startPoint.x + kBlue * startPoint.dx,
+                //     startPoint.yDistorted
+                // );
+                // c.lineTo(
+                //     finishPoint.x + kBlue * finishPoint.dx,
+                //     finishPoint.yDistorted
+                // );
+                // c.strokeStyle = "rgba(66, 209, 237, 0.75)";
+                // c.stroke();
+
+                // white line
+                c.beginPath();
+                c.moveTo(startPoint.xDistorted, startPoint.yDistorted);
+                c.lineTo(finishPoint.xDistorted, finishPoint.yDistorted);
+                c.strokeStyle = "rgba(255, 255, 255, 0.4)";
+                c.stroke();
+            }
         }
     }
 

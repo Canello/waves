@@ -131,11 +131,10 @@ export class Wave {
         // Distortion factor based on randomness and amount of mass
         // The greater the mass, the greater the random distortion absolute value
         const distortionFactorRandom = 5 * mass * Math.random() ** 2;
-
         return [distortionFactorRandom, distortionFactorRandom];
     }
 
-    // not selectable for now
+    // not selectable
     intersects(x, y) {
         return false;
     }
