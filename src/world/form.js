@@ -141,6 +141,7 @@ export class Piece {
 
         // Distortion factor based on randomness and euclidean distance of point to center of piece
         // The CLOSER to the center, the greater the random distortion absolute value
+        // Always positive, making distortions are biased to the right (+x) and bottom (+y) of the screen
         const distortionFactorRandom =
             5 * Math.random() * (distortionFactorEuclidean + 1) ** 2;
 
@@ -163,5 +164,68 @@ export class Piece {
             this.y <= y &&
             y <= this.y + this.height
         );
+    }
+}
+
+export class Wave {
+    static instance;
+
+    constructor(backgroundNoise = 0) {
+        if (!Wave.instance) {
+            Wave.instance = this;
+            this.massDistributionGrid =
+                this.makeMassDistributionGrid(backgroundNoise);
+        }
+
+        return Wave.instance;
+    }
+
+    makeMassDistributionGrid(backgroundNoise) {
+        const background = new Background();
+        return Array(background.numRows)
+            .fill(0)
+            .map((e) => Array(background.numCols).fill(backgroundNoise));
+    }
+
+    addMass(x, y, mass) {
+        const background = new Background();
+        const [i, j] = background.getClosestPointRowCol(x, y);
+        this.massDistributionGrid[i][j] += mass;
+    }
+
+    subtractMass(x, y, mass) {
+        const background = new Background();
+        const [i, j] = background.getClosestPointRowCol(x, y);
+        const resultingMass = this.massDistributionGrid[i][j] - mass;
+        if (resultingMass < 0) return;
+        this.massDistributionGrid[i][j] = resultingMass;
+    }
+
+    distort() {
+        const background = new Background();
+
+        for (let i = 0; i < this.massDistributionGrid.length; i++) {
+            const row = this.massDistributionGrid[i];
+
+            for (let j = 0; j < row.length; j++) {
+                const point = background.grid[i][j];
+                const mass = this.massDistributionGrid[i][j];
+                const [dx, dy] = this.calculateDistortion(mass);
+                point.distort(dx, dy);
+            }
+        }
+    }
+
+    calculateDistortion(mass) {
+        // Distortion factor based on randomness and amount of mass
+        // The greater the mass, the greater the random distortion absolute value
+        const distortionFactorRandom = 5 * mass * Math.random() ** 2;
+
+        return [distortionFactorRandom, distortionFactorRandom];
+    }
+
+    // not selectable for now
+    intersects(x, y) {
+        return false;
     }
 }

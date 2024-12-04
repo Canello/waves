@@ -1,4 +1,4 @@
-import { Piece } from "../world/form.js";
+import { Piece, Wave } from "../world/form.js";
 import { World } from "../world/world.js";
 import { Screen } from "./screen.js";
 
@@ -121,11 +121,15 @@ class KeyboardHandler {
         const w = this.increasePieceWidthBy10.bind(this);
         const a = this.decreasePieceHeightBy10.bind(this);
         const s = this.increasePieceHeightBy10.bind(this);
+        const r = this.addMassToMouseLocation.bind(this);
+        const e = this.subtractMassFromMouseLocation.bind(this);
         return {
             q,
             w,
             a,
             s,
+            r,
+            e,
         };
     }
 
@@ -173,5 +177,15 @@ class KeyboardHandler {
         if (!form) return;
         form.height = form.height + 10;
         form.y = form.y - 5;
+    }
+
+    addMassToMouseLocation() {
+        const wave = new Wave();
+        wave.addMass(this.mouseHandler.x, this.mouseHandler.y, 1);
+    }
+
+    subtractMassFromMouseLocation() {
+        const wave = new Wave();
+        wave.subtractMass(this.mouseHandler.x, this.mouseHandler.y, 1);
     }
 }

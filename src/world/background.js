@@ -112,6 +112,21 @@ export class Background {
         return points;
     }
 
+    getClosestPoint(x, y) {
+        const [i, j] = this.getClosestPointRowCol(x, y);
+        return this.grid[i][j];
+    }
+
+    getClosestPointRowCol(x, y) {
+        x = Screen.xBounded(x);
+        y = Screen.yBounded(y);
+
+        const i = Math.round(y / this.rowGap);
+        const j = Math.round(x / this.colGap);
+
+        return [i, j];
+    }
+
     resetDistortions() {
         this.grid.forEach((row) =>
             row.forEach((point) => point.resetDistortion())
